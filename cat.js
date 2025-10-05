@@ -9,7 +9,7 @@ window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 
 function router() {
-  if (events.length === 0) return; // Espera a que cargue el JSON
+  if (!events || events.length === 0) return;
   const hash = location.hash || '#/catalog';
   const [path] = hash.slice(2).split('?');
 
@@ -41,17 +41,20 @@ function renderCatalog() {
     return;
   }
 
-  grid.innerHTML = pageEvents.map(e => `
-    <div class="event-card">
-      <img src="${e.images[0]}" alt="Imagen de ${e.title}" style="width:100%;height:auto;">
-      <h3>${e.title}</h3>
-      <p>${e.city} - ${e.venue}</p>
-      <p>${new Date(e.datetime).toLocaleString()}</p>
-      <p>Desde ${e.priceFrom.toLocaleString('es-CO', { style: 'currency', currency: e.currency })}</p>
-      <button onclick="location.hash='#/event/${e.id}'">Ver detalle</button>
-      <button onclick="toggleFavorite('${e.id}')">${favorites.includes(e.id) ? 'Quitar Favorito' : 'Agregar Favorito'}</button>
-    </div>
-  `).join('');
+  grid.innerHTML = pageEvents.map(e => {
+    const imgSrc = Array.isArray(e.images) ? e.images[0] : e.images;
+    return `
+      <div class="event-card">
+        <img src="${imgSrc}" alt="Imagen de ${e.title}" style="width:100%;height:auto;">
+        <h3>${e.title}</h3>
+        <p>${e.city} - ${e.venue}</p>
+        <p>${new Date(e.datetime).toLocaleString()}</p>
+        <p>Desde ${e.priceFrom.toLocaleString('es-CO', { style: 'currency', currency: e.currency })}</p>
+        <button onclick="location.hash='#/event/${e.id}'">Ver detalle</button>
+        <button onclick="toggleFavorite('${e.id}')">${favorites.includes(e.id) ? 'Quitar Favorito' : 'Agregar Favorito'}</button>
+      </div>
+    `;
+  }).join('');
 
   renderPagination();
 }
@@ -83,10 +86,13 @@ function renderEventDetail(id) {
     container.innerHTML = '<p>Evento no encontrado.</p>';
     return;
   }
+
+  const images = Array.isArray(e.images) ? e.images : [e.images];
+
   container.innerHTML = `
     <h2>${e.title}</h2>
     <div class="gallery">
-      ${e.images.map((img, i) => `<img src="${img}" alt="Imagen ${i + 1} de ${e.title}">`).join('')}
+      ${images.map((img, i) => `<img src="${img}" alt="Imagen ${i + 1} de ${e.title}">`).join('')}
     </div>
     <p>${e.description}</p>
     <p>Artistas: ${e.artists.join(', ')}</p>
@@ -107,28 +113,19 @@ function addToCart(id) {
   const e = events.find(ev => ev.id === id);
   const qtyInput = document.getElementById('cantidad');
   const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-  if (e.soldOut) {
-    alert('Evento agotado');
-    return;
-  }
-  if (qty < 1) {
-    alert('Cantidad inválida');
-    return;
-  }
-  if (qty > e.stock) {
-    alert('No hay suficientes cupos');
-    return;
-  }
+
+  if (e.soldOut) return alert('Evento agotado');
+  if (qty < 1) return alert('Cantidad inválida');
+  if (qty > e.stock) return alert('No hay suficientes cupos');
+
   const existing = cart.find(item => item.id === id);
   if (existing) {
-    if (existing.cantidad + qty > e.stock) {
-      alert('No hay suficientes cupos');
-      return;
-    }
+    if (existing.cantidad + qty > e.stock) return alert('No hay suficientes cupos');
     existing.cantidad += qty;
   } else {
     cart.push({ id: e.id, title: e.title, cantidad: qty, priceFrom: e.priceFrom, currency: e.currency });
   }
+
   localStorage.setItem('cart', JSON.stringify(cart));
   alert('Añadido al carrito');
 }
@@ -140,6 +137,7 @@ function renderCart() {
     container.innerHTML = '<h2>Carrito</h2><p>No hay productos en el carrito.</p>';
     return;
   }
+
   let total = 0;
   container.innerHTML = '<h2>Carrito</h2>' + cart.map(e => {
     const subtotal = e.priceFrom * e.cantidad;
@@ -173,26 +171,9 @@ function renderFavorites() {
     container.innerHTML = '<h2>Favoritos</h2><p>No tienes eventos favoritos.</p>';
     return;
   }
-  const favEvents = events.filter(e => favorites.includes(e.id));
-  container.innerHTML = '<h2>Favoritos</h2>' + favEvents.map(e => `
-    <div class="event-card">
-      <img src="${e.images[0]}" alt="Imagen de ${e.title}" style="width:100%;height:auto;">
-      <h3>${e.title}</h3>
-      <p>${e.city} - ${e.venue}</p>
-      <button onclick="location.hash='#/event/${e.id}'">Ver detalle</button>
-      <button onclick="toggleFavorite('${e.id}')">Quitar Favorito</button>
-    </div>
-  `).join('') + `<a href="#/catalog">Volver</a>`;
-}
 
-// --- Compartir URL ---
-function copyURL(id) {
-  const url = `${location.origin}${location.pathname}#/event/${id}`;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url)
-      .then(() => alert('URL copiada al portapapeles'))
-      .catch(() => alert('No se pudo copiar la URL'));
-  } else {
-    alert('Tu navegador no soporta copiar al portapapeles');
-  }
-}
+  const favEvents = events.filter(e => favorites.includes(e.id));
+  container.innerHTML = '<h2>Favoritos</h2>' + favEvents.map(e => {
+    const imgSrc = Array.isArray(e.images) ? e.images[0] : e.images;
+    return `
+      <div cl
