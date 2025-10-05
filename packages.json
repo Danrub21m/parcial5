@@ -12,7 +12,7 @@
     "stock": 850,
     "soldOut": false,
     "popularity": 87,
-    "images": ["img/images1.jpg"],
+    "images": ["images1.jpg"],
     "policies": { "age": "Todas las edades", "refund": "Reembolso hasta 48h antes" },
     "description": "Un repertorio de música clásica con obras de Beethoven y Mozart."
   },
@@ -30,7 +30,7 @@
     "soldOut": false,
     "popularity": 95,
     "images": [
-      "img/images2.jpg"
+      "images2.jpg"
     ],
     "policies": { "age": "18+", "refund": "No reembolsable" },
     "description": "Un festival de música urbana con artistas internacionales y nacionales."
@@ -49,7 +49,7 @@
     "soldOut": false,
     "popularity": 78,
     "images": [
-      "img/images3.jpg"
+      "images3.jpg"
     ],
     "policies": { "age": "16+", "refund": "No reembolsable" },
     "description": "Una noche de comedia con risas garantizadas."
@@ -68,9 +68,10 @@
     "soldOut": false,
     "popularity": 90,
     "images": [
-      "img/images4.jpg"
+      "images4.jpg"
     ],
     "policies": { "age": "Todas las edades", "refund": "No reembolsable" },
     "description": "El festival de rock más grande de Colombia con bandas nacionales e internacionales."
   }
 ]
+
