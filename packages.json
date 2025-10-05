@@ -12,7 +12,7 @@
     "stock": 850,
     "soldOut": false,
     "popularity": 87,
-    "images": ["images1.jpg"],
+    "images": "images1.jpg",
     "policies": { "age": "Todas las edades", "refund": "Reembolso hasta 48h antes" },
     "description": "Un repertorio de música clásica con obras de Beethoven y Mozart."
   },
@@ -74,4 +74,5 @@
     "description": "El festival de rock más grande de Colombia con bandas nacionales e internacionales."
   }
 ]
+
 
