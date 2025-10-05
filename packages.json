@@ -1,0 +1,76 @@
+[
+  {
+    "id": "evt-0002",
+    "title": "Concierto Sinfónico de Verano",
+    "category": "musica",
+    "artists": ["Orquesta Filarmónica Nacional"],
+    "city": "Bogotá",
+    "venue": "Teatro Mayor",
+    "datetime": "2025-12-05T19:30:00-05:00",
+    "priceFrom": 120.00,
+    "currency": "PEN",
+    "stock": 850,
+    "soldOut": false,
+    "popularity": 87,
+    "images": ["img/images1.jpg"],
+    "policies": { "age": "Todas las edades", "refund": "Reembolso hasta 48h antes" },
+    "description": "Un repertorio de música clásica con obras de Beethoven y Mozart."
+  },
+  {
+    "id": "evt-0003",
+    "title": "Festival Urbano 2025",
+    "category": "musica",
+    "artists": ["Rapero X", "DJ Latina", "Banda Flow"],
+    "city": "Lima",
+    "venue": "Estadio Nacional",
+    "datetime": "2025-11-20T18:00:00-05:00",
+    "priceFrom": 150.00,
+    "currency": "PEN",
+    "stock": 30000,
+    "soldOut": false,
+    "popularity": 95,
+    "images": [
+      "img/images2.jpg"
+    ],
+    "policies": { "age": "18+", "refund": "No reembolsable" },
+    "description": "Un festival de música urbana con artistas internacionales y nacionales."
+  },
+  {
+    "id": "evt-0004",
+    "title": "Stand-Up Comedy Night",
+    "category": "musica",
+    "artists": ["Comediante A", "Comediante B"],
+    "city": "Buenos Aires",
+    "venue": "Teatro Vorterix",
+    "datetime": "2025-10-18T21:00:00-03:00",
+    "priceFrom": 45.00,
+    "currency": "PEN",
+    "stock": 400,
+    "soldOut": false,
+    "popularity": 78,
+    "images": [
+      "img/images3.jpg"
+    ],
+    "policies": { "age": "16+", "refund": "No reembolsable" },
+    "description": "Una noche de comedia con risas garantizadas."
+  },
+  {
+    "id": "evt-0005",
+    "title": "Rock al Parque 2025",
+    "category": "musica",
+    "artists": ["Banda Rockera", "Solista Indie", "Grupo Metal"],
+    "city": "Medellín",
+    "venue": "Parque de los Deseos",
+    "datetime": "2025-09-15T17:00:00-05:00",
+    "priceFrom": 80.00,
+    "currency": "PEN",
+    "stock": 5000,
+    "soldOut": false,
+    "popularity": 90,
+    "images": [
+      "img/images4.jpg"
+    ],
+    "policies": { "age": "Todas las edades", "refund": "No reembolsable" },
+    "description": "El festival de rock más grande de Colombia con bandas nacionales e internacionales."
+  }
+]
