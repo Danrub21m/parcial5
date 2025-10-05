@@ -9,7 +9,7 @@ window.addEventListener('hashchange', router);
 window.addEventListener('load', router);
 
 function router() {
-  if (!events || events.length === 0) return;
+  if (events.length === 0) return; // Espera a que cargue el JSON
   const hash = location.hash || '#/catalog';
   const [path] = hash.slice(2).split('?');
 
@@ -29,6 +29,7 @@ function router() {
 function renderCatalog() {
   const container = document.getElementById('app');
   if (!container) return;
+
   container.innerHTML = '<div id="event-container"></div><div id="pagination"></div>';
   const grid = document.getElementById('event-container');
 
@@ -41,20 +42,17 @@ function renderCatalog() {
     return;
   }
 
-  grid.innerHTML = pageEvents.map(e => {
-    const imgSrc = Array.isArray(e.images) ? e.images[0] : e.images;
-    return `
-      <div class="event-card">
-        <img src="${imgSrc}" alt="Imagen de ${e.title}" style="width:100%;height:auto;">
-        <h3>${e.title}</h3>
-        <p>${e.city} - ${e.venue}</p>
-        <p>${new Date(e.datetime).toLocaleString()}</p>
-        <p>Desde ${e.priceFrom.toLocaleString('es-CO', { style: 'currency', currency: e.currency })}</p>
-        <button onclick="location.hash='#/event/${e.id}'">Ver detalle</button>
-        <button onclick="toggleFavorite('${e.id}')">${favorites.includes(e.id) ? 'Quitar Favorito' : 'Agregar Favorito'}</button>
-      </div>
-    `;
-  }).join('');
+  grid.innerHTML = pageEvents.map(e => `
+    <div class="event-card">
+      <img src="${Array.isArray(e.images) ? e.images[0] : e.images}" alt="Imagen de ${e.title}" style="width:100%;height:auto;">
+      <h3>${e.title}</h3>
+      <p>${e.city} - ${e.venue}</p>
+      <p>${new Date(e.datetime).toLocaleString()}</p>
+      <p>Desde ${e.priceFrom.toLocaleString('es-PE', { style: 'currency', currency: e.currency })}</p>
+      <button onclick="location.hash='#/event/${e.id}'">Ver detalle</button>
+      <button onclick="toggleFavorite('${e.id}')">${favorites.includes(e.id) ? 'Quitar Favorito' : 'Agregar Favorito'}</button>
+    </div>
+  `).join('');
 
   renderPagination();
 }
@@ -66,9 +64,10 @@ function renderPagination() {
     pagination.innerHTML = '';
     return;
   }
+
   let buttons = '';
   for (let i = 1; i <= totalPages; i++) {
-    buttons += `<button onclick="goToPage(${i})" ${i === currentPage ? 'disabled' : ''}>${i}</button> `;
+    buttons += `<button onclick="goToPage(${i})" ${i === currentPage ? 'disabled' : ''}>${i}</button>`;
   }
   pagination.innerHTML = buttons;
 }
@@ -87,19 +86,17 @@ function renderEventDetail(id) {
     return;
   }
 
-  const images = Array.isArray(e.images) ? e.images : [e.images];
-
   container.innerHTML = `
     <h2>${e.title}</h2>
     <div class="gallery">
-      ${images.map((img, i) => `<img src="${img}" alt="Imagen ${i + 1} de ${e.title}">`).join('')}
+      ${e.images.map((img, i) => `<img src="${img}" alt="Imagen ${i + 1} de ${e.title}">`).join('')}
     </div>
     <p>${e.description}</p>
-    <p>Artistas: ${e.artists.join(', ')}</p>
-    <p>Venue: ${e.venue}, ${e.city}</p>
-    <p>Fecha/Hora: ${new Date(e.datetime).toLocaleString()}</p>
-    <p>Políticas: Edad ${e.policies.age}, Reembolso: ${e.policies.refund}</p>
-    <p>Cupos disponibles: ${e.stock}</p>
+    <p><strong>Artistas:</strong> ${e.artists.join(', ')}</p>
+    <p><strong>Lugar:</strong> ${e.venue}, ${e.city}</p>
+    <p><strong>Fecha/Hora:</strong> ${new Date(e.datetime).toLocaleString()}</p>
+    <p><strong>Políticas:</strong> Edad ${e.policies.age}, Reembolso: ${e.policies.refund}</p>
+    <p><strong>Cupos disponibles:</strong> ${e.stock}</p>
     <label>Cantidad: <input type="number" id="cantidad" min="1" max="${e.stock}" value="1"></label>
     <button onclick="addToCart('${e.id}')">Agregar al carrito</button>
     <button onclick="toggleFavorite('${e.id}')">${favorites.includes(e.id) ? 'Quitar Favorito' : 'Agregar Favorito'}</button>
@@ -133,6 +130,7 @@ function addToCart(id) {
 function renderCart() {
   const container = document.getElementById('app');
   if (!container) return;
+
   if (cart.length === 0) {
     container.innerHTML = '<h2>Carrito</h2><p>No hay productos en el carrito.</p>';
     return;
@@ -146,11 +144,13 @@ function renderCart() {
       <div class="cart-item">
         <h3>${e.title}</h3>
         <p>Cantidad: ${e.cantidad}</p>
-        <p>Subtotal: ${subtotal.toLocaleString('es-CO', { style: 'currency', currency: e.currency })}</p>
+        <p>Subtotal: ${subtotal.toLocaleString('es-PE', { style: 'currency', currency: e.currency })}</p>
       </div>
     `;
-  }).join('') + `<h3>Total: ${total.toLocaleString('es-CO', { style: 'currency', currency: cart[0].currency })}</h3>
-  <a href="#/catalog">Seguir comprando</a>`;
+  }).join('') + `
+    <h3>Total: ${total.toLocaleString('es-PE', { style: 'currency', currency: cart[0].currency })}</h3>
+    <a href="#/catalog">Seguir comprando</a>
+  `;
 }
 
 // --- Favoritos ---
@@ -167,13 +167,32 @@ function toggleFavorite(id) {
 function renderFavorites() {
   const container = document.getElementById('app');
   if (!container) return;
+
   if (favorites.length === 0) {
     container.innerHTML = '<h2>Favoritos</h2><p>No tienes eventos favoritos.</p>';
     return;
   }
 
   const favEvents = events.filter(e => favorites.includes(e.id));
-  container.innerHTML = '<h2>Favoritos</h2>' + favEvents.map(e => {
-    const imgSrc = Array.isArray(e.images) ? e.images[0] : e.images;
-    return `
-      <div cl
+  container.innerHTML = '<h2>Favoritos</h2>' + favEvents.map(e => `
+    <div class="event-card">
+      <img src="${Array.isArray(e.images) ? e.images[0] : e.images}" alt="Imagen de ${e.title}" style="width:100%;height:auto;">
+      <h3>${e.title}</h3>
+      <p>${e.city} - ${e.venue}</p>
+      <button onclick="location.hash='#/event/${e.id}'">Ver detalle</button>
+      <button onclick="toggleFavorite('${e.id}')">Quitar Favorito</button>
+    </div>
+  `).join('') + '<a href="#/catalog">Volver</a>';
+}
+
+// --- Compartir URL ---
+function copyURL(id) {
+  const url = `${location.origin}${location.pathname}#/event/${id}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url)
+      .then(() => alert('URL copiada al portapapeles'))
+      .catch(() => alert('No se pudo copiar la URL'));
+  } else {
+    alert('Tu navegador no soporta copiar al portapapeles');
+  }
+}
